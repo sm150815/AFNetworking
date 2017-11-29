@@ -107,6 +107,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// @name Initialization
 ///---------------------
 
++ (AFHTTPSessionManager*)defaultNetManager;
+
 /**
  Creates and returns an `AFHTTPSessionManager` object.
  */

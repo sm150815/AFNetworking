@@ -47,6 +47,20 @@
 @implementation AFHTTPSessionManager
 @dynamic responseSerializer;
 
++ (AFHTTPSessionManager*)defaultNetManager {
+    static AFHTTPSessionManager *manager;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        manager = [[AFHTTPSessionManager alloc]init];
+        manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+        manager.responseSerializer.acceptableContentTypes = nil;//[NSSet setWithObject:@"text/ plain"];
+        manager.securityPolicy = [AFSecurityPolicy defaultPolicy];
+        manager.securityPolicy.allowInvalidCertificates = YES;//忽略https证书
+        manager.securityPolicy.validatesDomainName = NO;//是否验证域名
+    });
+    return manager;
+}
+
 + (instancetype)manager {
     return [[[self class] alloc] initWithBaseURL:nil];
 }

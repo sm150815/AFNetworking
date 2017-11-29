@@ -20,6 +20,7 @@
 // THE SOFTWARE.
 
 #import "AFNetworkReachabilityManager.h"
+#import <UIKit/UIKit.h>
 #if !TARGET_OS_WATCH
 
 #import <netinet/in.h>
@@ -144,6 +145,13 @@ static void AFNetworkReachabilityReleaseCallback(const void *info) {
 
 + (instancetype)manager
 {
+    double version = [[UIDevice currentDevice].systemVersion doubleValue];
+    if (version >= 9.0f) {
+        struct sockaddr_in6 address; bzero(&address, sizeof(address));
+        address.sin6_len = sizeof(address);
+        address.sin6_family = AF_INET6;
+        return [self managerForAddress:&address];
+    } else {
 #if (defined(__IPHONE_OS_VERSION_MIN_REQUIRED) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000) || (defined(__MAC_OS_X_VERSION_MIN_REQUIRED) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100)
     struct sockaddr_in6 address;
     bzero(&address, sizeof(address));
@@ -156,6 +164,7 @@ static void AFNetworkReachabilityReleaseCallback(const void *info) {
     address.sin_family = AF_INET;
 #endif
     return [self managerForAddress:&address];
+    }
 }
 
 - (instancetype)initWithReachability:(SCNetworkReachabilityRef)reachability {
